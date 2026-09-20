@@ -1,0 +1,18 @@
+import { Pool } from "pg";
+import { secrets } from "../secrets/secrets.ts";
+
+export const pool = new Pool({
+  connectionString: secrets.db,
+  max: 20,
+  idleTimeoutMillis: 30_000,
+  connectionTimeoutMillis: 5_000,
+});
+export const checkDatabaseConnection = async () => {
+  try {
+    await pool.query("SELECT 1");
+    console.log("PostgreSQL connected successfully");
+  } catch (error) {
+    console.error("PostgreSQL connection failed:", error);
+    process.exit(1);
+  }
+};
