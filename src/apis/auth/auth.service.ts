@@ -1,8 +1,11 @@
 import { pool } from "../../db/connectDB.ts";
 import hashText from "../../utils/hashText.ts";
+import otpService from "../otp/otp.service.ts";
 import type { SignUpData } from "./auth.types.ts";
 
+
 const SignUp = async (body: SignUpData) => {
+
   const { email, password, username } = body;
 
   const getExistingQuery = `
@@ -22,13 +25,17 @@ const SignUp = async (body: SignUpData) => {
           await hashText(password),
           "user",
         ]);
-        return {
-          success: true,
-          message: "account created successfully",
-          note: "please verify your account before login",
-        };
+        if (createUser) {
+            const otp = await otpService.create({ email }); 
+          return {
+            success: true,
+            message: "account created successfully",
+            note: "please verify your account before login",
+            otp,
+          };
+        }
   }
-
+  await otpService.create({ email }); 
   return {
     success: true,
     message: "existing user ",
