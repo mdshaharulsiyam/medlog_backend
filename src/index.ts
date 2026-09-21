@@ -4,15 +4,22 @@ import { applyMiddleWare } from './middlewares/applyMiddleWare.ts';
 import { checkDatabaseConnection } from './db/connectDB.ts';
 import os from "node:os";
 import { secrets } from './secrets/secrets.ts';
+import { routeMiddleWare } from './middlewares/routeMiddleWare.ts';
 const app: Express = express();
 
 applyMiddleWare(app)
 
+routeMiddleWare(app);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello World!');
 });
-
+app.use(`/*all`, (req, res) => {
+  res.send({
+    success: false,
+    message: "who are you",
+  });
+});
 const getLocalIp = () => {
   const interfaces = os.networkInterfaces();
 

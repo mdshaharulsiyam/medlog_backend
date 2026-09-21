@@ -18,5 +18,6 @@ interface user extends SignUpData {
   id: string;
   img: string;
   isVerified: boolean;
+  isBlocked:boolean
   created_at: Date;
 }
