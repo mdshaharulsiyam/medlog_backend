@@ -4,7 +4,7 @@
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "rewriteRelativeImportExtensions": true,
-    "erasableSyntaxOnly": true,
+    // "erasableSyntaxOnly": true,
     "verbatimModuleSyntax": true,
     // "noEmit": true,
     "strict": true,

@@ -1,5 +1,7 @@
 import { Pool } from "pg";
 import { secrets } from "../secrets/secrets.ts";
+import authTable from "../apis/auth/auth.table.ts";
+import otpTable from "../apis/otp/otp.table.ts";
 
 export const pool = new Pool({
   connectionString: secrets.db,
@@ -11,6 +13,13 @@ export const checkDatabaseConnection = async () => {
   try {
     await pool.query("SELECT 1");
     console.log("PostgreSQL connected successfully");
+    try {
+      authTable();
+      otpTable();
+    } catch (error) {
+      console.error(error);
+      console.log("error creating tables");
+    }
   } catch (error) {
     console.error("PostgreSQL connection failed:", error);
     process.exit(1);
