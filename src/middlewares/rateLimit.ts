@@ -37,13 +37,7 @@ export const getRateLimit = rateLimit({
   },
 });
 
-
-const mutationMethods = new Set([
-  "POST",
-  "PUT",
-  "PATCH",
-  "DELETE",
-]);
+const mutationMethods = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 
 export const requestRateLimit = (
   req: Request,

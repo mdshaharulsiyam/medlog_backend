@@ -6,18 +6,22 @@ export const logger = winston.createLogger({
   level: "info",
   format: winston.format.combine(
     winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-    winston.format.errors({ stack: true }), 
-    winston.format.json()
+    winston.format.errors({ stack: true }),
+    winston.format.json(),
   ),
-  
+
   transports: [
     new winston.transports.Console({
       format: winston.format.combine(
         winston.format.colorize(),
-        winston.format.printf(({ timestamp, level, message, stack, ...meta }) => {
-          const metaStr = Object.keys(meta).length ? JSON.stringify(meta) : "";
-          return `[${timestamp}] ${level}: ${message} ${metaStr} ${stack || ""}`;
-        })
+        winston.format.printf(
+          ({ timestamp, level, message, stack, ...meta }) => {
+            const metaStr = Object.keys(meta).length
+              ? JSON.stringify(meta)
+              : "";
+            return `[${timestamp}] ${level}: ${message} ${metaStr} ${stack || ""}`;
+          },
+        ),
       ),
     }),
 
@@ -28,7 +32,11 @@ export const logger = winston.createLogger({
   ],
 });
 
-export const requestLogger = (req:Request, res:Response, next:NextFunction) => {
+export const requestLogger = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const startTime = process.hrtime();
 
   res.on("finish", () => {
@@ -48,7 +56,12 @@ export const requestLogger = (req:Request, res:Response, next:NextFunction) => {
   next();
 };
 
-export const errorLogger = (err:any, req:Request, res:Response, next:NextFunction) => {
+export const errorLogger = (
+  err: any,
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   logger.error("Unhandled Application Error", {
     message: err.message,
     stack: err.stack,

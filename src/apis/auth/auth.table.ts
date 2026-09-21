@@ -1,7 +1,7 @@
 import { pool } from "../../db/connectDB.ts";
-const authTable = async ()=>{
-    console.log("creating user table");
-    const query = `
+const authTable = async () => {
+  console.log("creating user table");
+  const query = `
     DO $$
     BEGIN
       CREATE TYPE user_role AS ENUM ('user', 'doctor', 'admin');
@@ -20,8 +20,8 @@ const authTable = async ()=>{
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
     `;
-    await pool.query(query);
-    console.log("user table created");
-}
+  await pool.query(query);
+  console.log("user table created");
+};
 
 export default authTable;

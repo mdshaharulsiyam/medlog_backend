@@ -2,7 +2,6 @@
 // import jwt, { JwtPayload } from "jsonwebtoken";
 // import config, { HttpStatus } from "../DefaultConfig/config";
 
-
 // interface DecodedToken extends JwtPayload {
 //   id?: string;
 // }

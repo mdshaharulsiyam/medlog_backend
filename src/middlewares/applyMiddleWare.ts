@@ -54,11 +54,11 @@ export const applyMiddleWare = (app: Express) => {
   );
   app.use(requestRateLimit);
   app.use(
-  "/uploads",
-  express.static(path.resolve(process.cwd(), "uploads"), {
-    dotfiles: "deny",
-    fallthrough: false,
-    maxAge: "7d",
-  }),
-);
+    "/uploads",
+    express.static(path.resolve(process.cwd(), "uploads"), {
+      dotfiles: "deny",
+      fallthrough: false,
+      maxAge: "7d",
+    }),
+  );
 };

@@ -1,18 +1,18 @@
-import express, { type Express, type Request, type Response } from 'express';
-import { logger, requestLogger } from './middlewares/logger.ts';
-import { applyMiddleWare } from './middlewares/applyMiddleWare.ts';
-import { checkDatabaseConnection } from './db/connectDB.ts';
+import express, { type Express, type Request, type Response } from "express";
+import { logger, requestLogger } from "./middlewares/logger.ts";
+import { applyMiddleWare } from "./middlewares/applyMiddleWare.ts";
+import { checkDatabaseConnection } from "./db/connectDB.ts";
 import os from "node:os";
-import { secrets } from './secrets/secrets.ts';
-import { routeMiddleWare } from './middlewares/routeMiddleWare.ts';
+import { secrets } from "./secrets/secrets.ts";
+import { routeMiddleWare } from "./middlewares/routeMiddleWare.ts";
 const app: Express = express();
 
-applyMiddleWare(app)
+applyMiddleWare(app);
 
 routeMiddleWare(app);
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Hello World!');
+app.get("/", (req: Request, res: Response) => {
+  res.send("Hello World!");
 });
 app.use(`/*all`, (req, res) => {
   res.send({
@@ -34,9 +34,8 @@ const getLocalIp = () => {
   return "localhost";
 };
 
-
-app.listen(secrets.port,()=>{
-  console.log("server running")
-logger.info(`Server running at http://${getLocalIp()}:${secrets.port}`);
+app.listen(secrets.port, () => {
+  console.log("server running");
+  logger.info(`Server running at http://${getLocalIp()}:${secrets.port}`);
   checkDatabaseConnection();
 });

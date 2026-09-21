@@ -36,6 +36,7 @@
     "@types/pino": "^7.0.4",
     "@types/pino-http": "^5.8.4",
     "@types/winston": "^2.4.4",
+    "prettier": "3.9.8",
     "typescript": "^7.0.2"
   }
 }

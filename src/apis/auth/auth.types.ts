@@ -1,23 +1,23 @@
-enum UserRole {
+export enum UserRole {
   USER = "user",
   DOCTOR = "doctor",
   ADMIN = "admin",
 }
 
-interface SignInData {
+export interface SignInData {
   email: string;
   password: string;
 }
 
-interface SignUpData extends SignInData {
+export interface SignUpData extends SignInData {
   username: string;
 }
 
-interface user extends SignUpData {
+export interface user extends SignUpData {
   role: UserRole;
   id: string;
   img: string;
   isVerified: boolean;
-  isBlocked:boolean
+  isBlocked: boolean;
   created_at: Date;
 }
