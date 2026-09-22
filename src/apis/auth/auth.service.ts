@@ -2,7 +2,7 @@ import { pool } from "../../db/connectDB.ts";
 import { secrets } from "../../secrets/secrets.ts";
 import hashText, { compare } from "../../utils/hashText.ts";
 import otpService from "../otp/otp.service.ts";
-import type { SignInData, SignUpData } from "./auth.types.ts";
+import type { ChangePasswordData, SignInData, SignUpData } from "./auth.types.ts";
 import jwt from "jsonwebtoken";
 const SignUp = async (body: SignUpData) => {
   const { email, password, username } = body;
@@ -106,6 +106,10 @@ const Login = async (body: SignInData) => {
     },
     token,
   };
+};
+
+const ChangePassword = async (body: ChangePasswordData) => {
+
 };
 
 const authService = Object.freeze({

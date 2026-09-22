@@ -1,131 +1,116 @@
-// import { NextFunction, Request, Response } from "express";
-// import jwt, { JwtPayload } from "jsonwebtoken";
-// import config, { HttpStatus } from "../DefaultConfig/config";
+import type { NextFunction, Request, Response } from "express";
+import jwt, { type JwtPayload } from "jsonwebtoken";
+import { httpStatus, secrets } from "../secrets/secrets.ts";
+import { pool } from "../db/connectDB.ts";
 
-// interface DecodedToken extends JwtPayload {
-//   id?: string;
-// }
+interface DecodedToken extends JwtPayload {
+    id?: number | string;
+    email?: string;
+    role?: string;
+    username?: string;
+}
 
-// const verifyToken = (
-//   allowedRoles: string[] = [],
-//   privet: boolean = true,
-//   type: string = config.TOKEN_NAME,
-//   fn?: (req: Request) => any,
-// ) => {
-//   return async (
-//     req: Request,
-//     res: Response,
-//     next: NextFunction,
-//   ): Promise<void> => {
-//     try {
-//       let tokenWithBearer = req.headers.authorization || req.cookies[type];
+const verifyToken = (
+    allowedRoles: string[] = [],
+    privet: boolean = true,
+    type: string = secrets.TOKEN_NAME as string,
+    fn?: (req: Request) => any,
+) => {
+    return async (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ): Promise<void> => {
+        try {
+            let tokenWithBearer = req.headers.authorization || req.cookies?.[type];
 
-//       if (!tokenWithBearer && !privet) {
-//         return next();
-//       }
+            if (!tokenWithBearer && !privet) {
+                return next();
+            }
 
-//       if (!tokenWithBearer) {
-//         res.status(403).send({ success: false, message: "Forbidden access" });
-//         return;
-//       }
+            if (!tokenWithBearer) {
+                res
+                    .status(httpStatus.FORBIDDEN)
+                    .send({ success: false, message: "Forbidden access" });
+                return;
+            }
 
-//       let token: string;
-//       if (tokenWithBearer.startsWith("Bearer ")) {
-//         token = tokenWithBearer.split(" ")[1];
-//       } else {
-//         token = tokenWithBearer;
-//       }
+            let token: string;
+            if (tokenWithBearer.startsWith("Bearer ")) {
+                token = tokenWithBearer.split(" ")[1];
+            } else {
+                token = tokenWithBearer;
+            }
 
-//       jwt.verify(
-//         token,
-//         config.ACCESS_TOKEN_SECRET || "",
-//         async (err, decoded) => {
-//           if (err) {
-//             res
-//               .status(401)
-//               .send({ success: false, message: "Unauthorized access" });
-//             return;
-//           }
+            jwt.verify(
+                token,
+                secrets.ACCESS_TOKEN_SECRET || "duhal_access_token_secret",
+                async (err, decoded) => {
+                    if (err) {
+                        res
+                            .status(httpStatus.UNAUTHORIZED)
+                            .send({ success: false, message: "Unauthorized access" });
+                        return;
+                    }
 
-//           const decodedToken = decoded as DecodedToken;
+                    const decodedToken = decoded as DecodedToken;
 
-//           if (type == config.ACCESS_TOKEN_NAME) {
-//             const [user, extra] = await Promise.all([
-//               auth_model.findOne({
-//                 // email: decodedToken?.email,
-//               }),
-//               fn ? fn(req) : {},
-//             ]);
-//             // console.log(user)
-//             if (user && user?.accessToken == token) {
-//             //   req.user = user;
-//             //   req.extra = extra;
-//               return next();
-//             } else {
-//               return res.status(HttpStatus.NOT_FOUND).send({
-//                 success: false,
-//                 message: "token missing or token has been expired",
-//               });
-//             }
-//           }
+                    try {
+                        const [userResult, extra] = await Promise.all([
+                            pool.query("SELECT * FROM users WHERE id = $1 LIMIT 1", [
+                                decodedToken.id,
+                            ]),
+                            fn ? fn(req) : Promise.resolve({}),
+                        ]);
 
-//           const [user, extra] = await Promise.all([
-//             auth_model.findById(decodedToken.id),
-//             fn ? fn(req) : {},
-//           ]);
+                        const user = userResult?.rows?.[0];
 
-//           if (!user) {
-//             if (privet) {
-//               res
-//                 .status(404)
-//                 .send({ success: false, message: "User not found" });
-//               return;
-//             } else {
-//               return next();
-//             }
-//           }
+                        if (!user) {
+                            if (privet) {
+                                res
+                                    .status(httpStatus.NOT_FOUND)
+                                    .send({ success: false, message: "User not found" });
+                                return;
+                            } else {
+                                return next();
+                            }
+                        }
 
-//           if (user.block) {
-//             return res
-//               .status(401)
-//               .send({ success: false, message: "You are blocked by admin" });
-//           }
-//           if ((user as any).is_suspended) {
-//             return res.status(401).send({
-//               success: false,
-//               message:
-//                 (user as any).suspended_reason ||
-//                 "Your account is suspended. Please contact support.",
-//             });
-//           }
-//           if ((user as any).deleted_at) {
-//             return res.status(401).send({
-//               success: false,
-//               message: "This account has been deleted",
-//             });
-//           }
-//           if (!user.is_verified) {
-//             return res.status(401).send({
-//               success: false,
-//               message: "You please verify your email",
-//             });
-//           }
-//           if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
-//             res.status(403).send({
-//               success: false,
-//               message: "Access denied: insufficient permissions",
-//             });
-//             return;
-//           }
-//         //   req.user = user.toObject();
-//         //   req.extra = extra;
-//           next();
-//         },
-//       );
-//     } catch (error) {
-//       next(error); // Forward errors to the error-handling middleware
-//     }
-//   };
-// };
+                        if (user.is_blocked) {
+                            res
+                                .status(httpStatus.UNAUTHORIZED)
+                                .send({ success: false, message: "You are blocked by admin" });
+                            return;
+                        }
 
-// export default verifyToken;
+                        if (!user.is_verified) {
+                            res
+                                .status(httpStatus.UNAUTHORIZED)
+                                .send({ success: false, message: "You please verify your email" });
+                            return;
+                        }
+
+                        if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
+                            res.status(httpStatus.FORBIDDEN).send({
+                                success: false,
+                                message: "Access denied: insufficient permissions",
+                            });
+                            return;
+                        }
+
+                        req.user = user;
+                        req.extra = extra;
+                        next();
+                    } catch (dbError) {
+                        next(dbError);
+                    }
+                },
+            );
+        } catch (error) {
+            next(error);
+        }
+    };
+};
+
+export default verifyToken;
+

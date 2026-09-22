@@ -1,6 +1,11 @@
 import { Request } from "express";
 declare global {
   namespace Express {
-    interface Request {}
+    interface Request {
+      user?: any;
+      extra?: any;
+      cookies?: Record<string, any>;
+    }
   }
 }
+

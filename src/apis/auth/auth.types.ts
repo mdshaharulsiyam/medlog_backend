@@ -8,7 +8,10 @@ export interface SignInData {
   email: string;
   password: string;
 }
-
+export interface ChangePasswordData extends SignInData {
+  oldPassword: string;
+  confirmPassword: string;
+} 
 export interface SignUpData extends SignInData {
   username: string;
 }
