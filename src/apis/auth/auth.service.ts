@@ -3,9 +3,7 @@ import hashText from "../../utils/hashText.ts";
 import otpService from "../otp/otp.service.ts";
 import type { SignUpData } from "./auth.types.ts";
 
-
 const SignUp = async (body: SignUpData) => {
-
   const { email, password, username } = body;
 
   const getExistingQuery = `SELECT * FROM users WHERE email = $1 LIMIT 1`;
@@ -13,29 +11,33 @@ const SignUp = async (body: SignUpData) => {
   const existingUser = await pool.query(getExistingQuery, [email]);
 
   if (existingUser?.rowCount == 0) {
-    
-        const insertQuery = `INSERT INTO users (username,email,password,role) VALUES ($1,$2,$3,$4)`;
+    const insertQuery = `INSERT INTO users (username,email,password,role) VALUES ($1,$2,$3,$4)`;
 
-        await pool.query(insertQuery, [
-          username,
-          email,
-          await hashText(password),
-          "user",
-        ]);
+    await pool.query(insertQuery, [
+      username,
+      email,
+      await hashText(password),
+      "user",
+    ]);
 
-        await otpService.create({ email }); 
-          return {
-            success: true,
-            message: "account created successfully",
-            note: "please verify your account before login",
-          };
-        
+    otpService.create({ email });
+    return {
+      success: true,
+      message: "account created successfully",
+      note: "please verify your account before login",
+    };
   }
-  await otpService.create({ email }); 
+
+  if (
+    existingUser?.rowCount !== 0 &&
+    existingUser?.rows[0].is_verified === false
+  ) {
+     otpService.create({ email });
+  }
   return {
     success: true,
-    message: "existing user ",
-    data: existingUser?.rows,
+    message: "account created successfully",
+    note: "please verify your account before login",
   };
 };
 

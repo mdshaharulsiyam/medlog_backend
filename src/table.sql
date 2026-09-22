@@ -12,7 +12,8 @@ CREATE TABLE IF NOT EXISTS users (
 
 ALTER TABLE users ADD COLUMN IsBlocked BOOLEAN DEFAULT FALSE;
 
-ALTER TABLE users RENAME COLUMN IsBlocked TO isBlocked;
+ALTER TABLE users RENAME COLUMN IsBlocked TO is_blocked;
+ALTER TABLE users RENAME COLUMN isVerified TO is_verified;
 ALTER TABLE users
 DROP CONSTRAINT users_username_key;
 

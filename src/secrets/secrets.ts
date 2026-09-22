@@ -4,8 +4,11 @@ dotenv.config();
 export const secrets = Object.freeze({
   db: process.env.DB,
   port: process.env.PORT,
-  MAIL_EMAIL: "",
-  MAIL_PASSWORD: "",
+  MAIL_EMAIL: process.env.MAIL_EMAIL,
+  MAIL_PASSWORD: process.env.MAIL_PASSWORD,
+  TOKEN_NAME: process.env.TOKEN_NAME,
+  ACCESS_TOKEN_NAME: process.env.ACCESS_TOKEN_NAME,
+  ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET,
 });
 
 export const httpStatus = Object.freeze({
