@@ -5,7 +5,10 @@ declare global {
       user?: any;
       extra?: any;
       cookies?: Record<string, any>;
+      files?: any;
+      file?: any;
     }
   }
 }
+
 
