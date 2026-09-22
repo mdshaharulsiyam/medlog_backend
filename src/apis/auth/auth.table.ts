@@ -15,7 +15,8 @@ const authTable = async () => {
     email VARCHAR(50) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     img TEXT,
-    isVerified BOOLEAN DEFAULT FALSE,
+    is_verified BOOLEAN DEFAULT FALSE,
+    is_blocked BOOLEAN DEFAULT FALSE,
     role user_role DEFAULT 'user'  NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
