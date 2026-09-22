@@ -11,8 +11,8 @@ const create = async (req: Request, res: Response) => {
 const verify = async (req: Request, res: Response) => {
   const result = await otpService.verify(req.body);
   sendResponse(res, 200, result, [
-    secrets.ACCESS_TOKEN_SECRET as string,
-    result?.data?.password_reset_token as string,
+    secrets.ACCESS_TOKEN_NAME as string,
+    result?.data?.token as string,
     60 * 3 * 1000,
   ]);
 };

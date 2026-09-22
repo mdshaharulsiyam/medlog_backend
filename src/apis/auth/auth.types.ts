@@ -16,7 +16,7 @@ export interface SignUpData extends SignInData {
   username: string;
 }
 
-export interface user extends SignUpData {
+export interface userType extends SignUpData {
   role: UserRole;
   id: string;
   img: string;

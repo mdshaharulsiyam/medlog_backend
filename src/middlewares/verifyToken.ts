@@ -23,7 +23,6 @@ const verifyToken = (
     ): Promise<void> => {
         try {
             let tokenWithBearer = req.headers.authorization || req.cookies?.[type];
-
             if (!tokenWithBearer && !privet) {
                 return next();
             }
@@ -68,8 +67,8 @@ const verifyToken = (
                         if (!user) {
                             if (privet) {
                                 res
-                                    .status(httpStatus.NOT_FOUND)
-                                    .send({ success: false, message: "User not found" });
+                                    .status(httpStatus.BAD_REQUEST)
+                                    .send({ success: false, message: "Unauthorized access" });
                                 return;
                             } else {
                                 return next();
@@ -79,14 +78,14 @@ const verifyToken = (
                         if (user.is_blocked) {
                             res
                                 .status(httpStatus.UNAUTHORIZED)
-                                .send({ success: false, message: "You are blocked by admin" });
+                                .send({ success: false, message: "You are blocked by admin" ,note: "please contact support for more information"});
                             return;
                         }
 
                         if (!user.is_verified) {
                             res
                                 .status(httpStatus.UNAUTHORIZED)
-                                .send({ success: false, message: "You please verify your email" });
+                                .send({ success: false, message: "You please verify your email",note: "please check your email for verification link"});
                             return;
                         }
 

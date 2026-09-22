@@ -9,6 +9,7 @@ export const secrets = Object.freeze({
   TOKEN_NAME: process.env.TOKEN_NAME,
   ACCESS_TOKEN_NAME: process.env.ACCESS_TOKEN_NAME,
   ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET,
+  USER: ['user', 'doctor', 'admin'],
 });
 
 export const httpStatus = Object.freeze({
