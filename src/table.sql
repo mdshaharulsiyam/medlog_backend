@@ -25,3 +25,5 @@ CREATE TABLE IF NOT EXISTS otp(
 )
 
 SELECT * FROM otp WHERE email = $1 AND otp = $2 AND created_at >= NOW() - INTERVAL '5 minutes';
+
+SELECT * FROM users WHERE email = $1 AND password =$2;

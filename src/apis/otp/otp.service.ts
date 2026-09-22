@@ -3,6 +3,7 @@ import { secrets } from "../../secrets/secrets.ts";
 import { sendMail } from "../../utils/sendMail.ts";
 import type { CreateOtp, VerifyOtp } from "./otp.types.ts";
 import jwt from "jsonwebtoken";
+
 const create = async (
   body: CreateOtp,
   from: "server" | "client" = "server",
@@ -52,9 +53,21 @@ const verify = async (body: VerifyOtp) => {
     };
   }
   const updateQuery = `UPDATE users SET is_verified = TRUE WHERE email = $1`;
-  const updateResult = await pool.query(updateQuery, [email]);
-  console.log(updateResult);
-  const password_reset_token = await jwt.sign(
+  const selectQuery = `SELECT * FROM users WHERE email = $1 LIMIT 1`;
+  const [user] = await Promise.all([
+    pool.query(selectQuery, [email]),
+    pool.query(updateQuery, [email]),
+  ])
+
+if (user?.rows[0]?.is_blocked === true) {
+  return {
+    success: false,
+    message: "account blocked",
+    note: "please contact support for more information",
+  };
+}
+
+  const password_reset_token = jwt.sign(
     {
       email,
       code: otp,
@@ -62,8 +75,13 @@ const verify = async (body: VerifyOtp) => {
     secrets.ACCESS_TOKEN_SECRET || "duhal_access_token_secret",
     { expiresIn: 5 * 60 },
   );
-  const token = await jwt.sign(
-    { email: email },
+  const token = jwt.sign(
+    {
+      email: email,
+      id: user?.rows[0]?.id,
+      role: user?.rows[0]?.role,
+      username: user?.rows[0]?.username,
+    },
     secrets.ACCESS_TOKEN_SECRET || "duhal_access_token_secret",
     { expiresIn: 60 * 60 * 24 * 500 },
   );
