@@ -4,7 +4,7 @@ const authTable = async () => {
   const query = `
     DO $$
     BEGIN
-      CREATE TYPE user_role AS ENUM ('user', 'doctor', 'admin');
+      CREATE TYPE user_role AS ENUM ('user', 'doctor', 'pharmacist', 'admin');
     EXCEPTION
       WHEN duplicate_object THEN NULL;
     END

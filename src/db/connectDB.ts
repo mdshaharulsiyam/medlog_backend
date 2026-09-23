@@ -2,6 +2,7 @@ import { Pool } from "pg";
 import { secrets } from "../secrets/secrets.ts";
 import authTable from "../apis/auth/auth.table.ts";
 import otpTable from "../apis/otp/otp.table.ts";
+import specialtyTable from "../apis/specialty/specialty.table.ts";
 
 export const pool = new Pool({
   connectionString: secrets.db,
@@ -16,6 +17,7 @@ export const checkDatabaseConnection = async () => {
     try {
       authTable();
       otpTable();
+      specialtyTable();
     } catch (error) {
       console.error(error);
       console.log("error creating tables");

@@ -1,4 +1,6 @@
-CREATE TYPE user_role AS ENUM ('user', 'doctor', 'admin');
+--  authentication and otp verification table
+CREATE TYPE user_role AS ENUM ('user', 'doctor', 'pharmacist', 'admin');
+ALTER TYPE user_role ADD VALUE 'pharmacist';
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
@@ -27,3 +29,23 @@ CREATE TABLE IF NOT EXISTS otp(
 SELECT * FROM otp WHERE email = $1 AND otp = $2 AND created_at >= NOW() - INTERVAL '5 minutes';
 
 SELECT * FROM users WHERE email = $1 AND password =$2;
+
+-- profile table
+CREATE TABLE IF NOT EXISTS profile(
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+
+)
+
+-- specialty table
+CREATE TABLE IF NOT EXISTS specialties(
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) UNIQUE NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+)
+
+CREATE TABLE IF NOT EXISTS users_specialty(
+    id SERIAL PRIMARY KEY,
+    profile_id INTEGER REFERENCES profile (id) ON DELETE CASCADE,
+    specialty_id INTEGER REFERENCES specialty(id) ON DELETE CASCADE
+)
