@@ -43,6 +43,10 @@ const signUp = async (body: SignUpData) => {
   };
 };
 
+const createAccount = async (body: SignUpData) => {
+  
+}
+
 const login = async (body: SignInData) => {
   const { email, password } = body;
   const getExistingQuery = `SELECT * FROM users WHERE email = $1 LIMIT 1`;
@@ -166,5 +170,6 @@ const authService = Object.freeze({
   login,
   changePassword,
   resetPassword,
+  createAccount
 });
 export default authService;

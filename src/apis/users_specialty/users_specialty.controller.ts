@@ -4,7 +4,8 @@ import { sendResponse } from "../../utils/sendResponse.ts";
 import { httpStatus } from "../../secrets/secrets.ts";
 
 const create = async (req: Request, res: Response) => {
-  const result = await usersSpecialtyService.create(req.body);
+  const user_id = req.user?.id;
+  const result = await usersSpecialtyService.create(req.body, user_id);
   sendResponse(res, httpStatus.CREATED, result);
 };
 

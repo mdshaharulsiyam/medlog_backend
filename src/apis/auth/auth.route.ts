@@ -15,6 +15,11 @@ authRoute
   )
 
   .post(
+    "/create-account",
+    asyncWrapper(authController.createAccount),
+    )
+
+  .post(
     "/login",
     validateRequest(authValidation.login),
     asyncWrapper(authController.login),

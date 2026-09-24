@@ -3,8 +3,18 @@ import type {
   CreateUsersSpecialtyInput,
 } from "./users_specialty.types.ts";
 
-const create = async (body: CreateUsersSpecialtyInput) => {
-  const { specialty_id, profile_id } = body;
+const create = async (body: CreateUsersSpecialtyInput,user_id: string | number) => {
+  const profileQuery = `SELECT id FROM profile WHERE user_id = $1 LIMIT 1;`;
+  const profileResult = await pool.query(profileQuery, [user_id]);
+  if (profileResult.rowCount === 0) {
+    return {
+      success: false,
+      message: "Profile not found for the user",
+      note: "Please create a profile before adding a specialty",
+    };
+  }
+  const profile_id = profileResult.rows[0].id;
+  const { specialty_id } = body;
   const query = `
     INSERT INTO users_specialties (specialty_id, profile_id)
     VALUES ($1, $2)

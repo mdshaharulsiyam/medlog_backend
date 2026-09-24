@@ -1,3 +1,6 @@
+import type { IProfile } from "../profile/profile.types.ts";
+import type { CreateUsersSpecialtyInput } from "../users_specialty/users_specialty.types.ts";
+
 export enum UserRole {
   USER = "user",
   DOCTOR = "doctor",
@@ -23,4 +26,8 @@ export interface userType extends SignUpData {
   isVerified: boolean;
   isBlocked: boolean;
   created_at: Date;
+}
+
+export interface CreateAccountData extends SignUpData, IProfile,CreateUsersSpecialtyInput {
+
 }

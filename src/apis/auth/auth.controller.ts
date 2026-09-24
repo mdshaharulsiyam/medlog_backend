@@ -8,6 +8,11 @@ const signUp = async (req: Request, res: Response) => {
   sendResponse(res, httpStatus.SUCCESS, result);
 };
 
+const createAccount = async (req: Request, res: Response) => {
+  const result = await authService.createAccount(req.body);
+  sendResponse(res, httpStatus.SUCCESS, result);
+}
+
 const login = async (req: Request, res: Response) => {
   const result = await authService.login(req.body);
   sendResponse(res, httpStatus.SUCCESS, result, [
@@ -32,4 +37,5 @@ export const authController = Object.freeze({
   login,
   changePassword,
   resetPassword,
+  createAccount,
 });

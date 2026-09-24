@@ -6,7 +6,7 @@ const usersSpecialtyTable = async () => {
     CREATE TABLE IF NOT EXISTS users_specialty(
     id SERIAL PRIMARY KEY,
     profile_id INTEGER REFERENCES profile (id) ON DELETE CASCADE,
-    specialty_id INTEGER REFERENCES specialty(id) ON DELETE CASCADE,
+    specialty_id INTEGER REFERENCES specialties (id) ON DELETE CASCADE,
     UNIQUE(profile_id, specialty_id),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
