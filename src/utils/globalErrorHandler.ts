@@ -19,7 +19,7 @@ export class CustomError extends Error {
 
 const handleZodError = (err: ZodError): CustomError => {
   const message = err.issues?.[0]?.message ?? "Invalid input data";
-  return new CustomError(message, 400);
+  return new CustomError(message+ " z", 400);
 };
 
 const handleCastError = (err: any): CustomError => {

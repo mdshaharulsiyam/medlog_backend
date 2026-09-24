@@ -1,17 +1,16 @@
 import { pool } from "../../db/connectDB.ts";
 import type {
   CreateUsersSpecialtyInput,
-  UpdateUsersSpecialtyInput,
 } from "./users_specialty.types.ts";
 
 const create = async (body: CreateUsersSpecialtyInput) => {
-  const { title, description } = body;
+  const { specialty_id, profile_id } = body;
   const query = `
-    INSERT INTO users_specialties (title, description)
+    INSERT INTO users_specialties (specialty_id, profile_id)
     VALUES ($1, $2)
     RETURNING *;
   `;
-  const result = await pool.query(query, [title, description || null]);
+  const result = await pool.query(query, [specialty_id, profile_id]);
   return {
     success: true,
     message: "UsersSpecialty created successfully",
@@ -45,22 +44,21 @@ const getById = async (id: string | number) => {
   };
 };
 
-const update = async (id: string | number, body: UpdateUsersSpecialtyInput) => {
-  const { title, description, is_active } = body;
+const update = async (id: string | number, body: CreateUsersSpecialtyInput) => {
+  const { specialty_id, profile_id } = body;
   const query = `
     UPDATE users_specialties
     SET 
-      title = COALESCE($1, title),
-      description = COALESCE($2, description),
+      specialty_id = COALESCE($1, specialty_id),
+      profile_id = COALESCE($2, profile_id),
       is_active = COALESCE($3, is_active),
       updated_at = CURRENT_TIMESTAMP
     WHERE id = $4
     RETURNING *;
   `;
   const result = await pool.query(query, [
-    title ?? null,
-    description ?? null,
-    is_active ?? null,
+    specialty_id ?? null,
+    profile_id ?? null,
     id,
   ]);
   if (result.rowCount === 0) {

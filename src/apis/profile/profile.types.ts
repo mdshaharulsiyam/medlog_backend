@@ -1,19 +1,11 @@
 export interface IProfile {
   id?: number;
-  title: string;
-  description?: string;
-  is_active?: boolean;
+  user_id: number;
+  phone: number;
+  first_name: string;
+  last_name: string;
+  gender?: string;
+  years_of_experience?: Date;
+  date_of_birth?: Date;
   created_at?: Date;
-  updated_at?: Date;
-}
-
-export interface CreateProfileInput {
-  title: string;
-  description?: string;
-}
-
-export interface UpdateProfileInput {
-  title?: string;
-  description?: string;
-  is_active?: boolean;
 }

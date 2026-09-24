@@ -5,11 +5,7 @@ import { httpStatus } from "../../secrets/secrets.ts";
 
 const create = async (req: Request, res: Response) => {
   const result = await usersSpecialtyService.create(req.body);
-  sendResponse(
-    res,
-    result.success ? httpStatus.CREATED : httpStatus.BAD_REQUEST,
-    result,
-  );
+  sendResponse(res, httpStatus.CREATED, result);
 };
 
 const getAll = async (req: Request, res: Response) => {
@@ -18,7 +14,7 @@ const getAll = async (req: Request, res: Response) => {
 };
 
 const getById = async (req: Request, res: Response) => {
-  const result = await usersSpecialtyService.getById(req.params.id);
+  const result = await usersSpecialtyService.getById(req.params.id?.toString());
   sendResponse(
     res,
     result.success ? httpStatus.SUCCESS : httpStatus.NOT_FOUND,
@@ -27,7 +23,7 @@ const getById = async (req: Request, res: Response) => {
 };
 
 const update = async (req: Request, res: Response) => {
-  const result = await usersSpecialtyService.update(req.params.id, req.body);
+  const result = await usersSpecialtyService.update(req.params.id?.toString(), req.body);
   sendResponse(
     res,
     result.success ? httpStatus.SUCCESS : httpStatus.NOT_FOUND,
@@ -36,7 +32,7 @@ const update = async (req: Request, res: Response) => {
 };
 
 const remove = async (req: Request, res: Response) => {
-  const result = await usersSpecialtyService.remove(req.params.id);
+  const result = await usersSpecialtyService.remove(req.params.id?.toString());
   sendResponse(
     res,
     result.success ? httpStatus.SUCCESS : httpStatus.NOT_FOUND,

@@ -3,11 +3,12 @@ import { pool } from "../../db/connectDB.ts";
 const usersSpecialtyTable = async () => {
   console.log("creating users_specialty table");
   const query = `
-    CREATE TABLE IF NOT EXISTS specialty(
+    CREATE TABLE IF NOT EXISTS users_specialty(
     id SERIAL PRIMARY KEY,
-    name VARCHAR(50) UNIQUE NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    profile_id INTEGER REFERENCES profile (id) ON DELETE CASCADE,
+    specialty_id INTEGER REFERENCES specialty(id) ON DELETE CASCADE,
+    UNIQUE(profile_id, specialty_id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
   `;
   await pool.query(query);

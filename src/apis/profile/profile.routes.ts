@@ -3,13 +3,16 @@ import asyncWrapper from "../../utils/asyncWrapper.ts";
 import validateRequest from "../../middlewares/validateRequest.ts";
 import profileController from "./profile.controller.ts";
 import profileValidation from "./profile.validation.ts";
+import verifyToken from "../../middlewares/verifyToken.ts";
+import { secrets } from "../../secrets/secrets.ts";
 
 const profileRoute = express.Router();
 
 profileRoute
-  .post(
+  .patch(
     "/",
     validateRequest(profileValidation.create),
+    verifyToken(secrets.USER),
     asyncWrapper(profileController.create),
   )
   .get("/", asyncWrapper(profileController.getAll))
