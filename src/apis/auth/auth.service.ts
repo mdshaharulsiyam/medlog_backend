@@ -3,7 +3,9 @@ import { secrets } from "../../secrets/secrets.ts";
 import hashText, { compare } from "../../utils/hashText.ts";
 import { sendMail } from "../../utils/sendMail.ts";
 import otpService from "../otp/otp.service.ts";
-import type { ChangePasswordData, SignInData, SignUpData, userType } from "./auth.types.ts";
+import profileService from "../profile/profile.service.ts";
+import usersSpecialtyService from "../users_specialty/users_specialty.service.ts";
+import type { ChangePasswordData, CreateAccountData, SignInData, SignUpData, userType } from "./auth.types.ts";
 import jwt from "jsonwebtoken";
 const signUp = async (body: SignUpData) => {
   const { email, password, username } = body;
@@ -13,9 +15,9 @@ const signUp = async (body: SignUpData) => {
   const existingUser = await pool.query(getExistingQuery, [email]);
 
   if (existingUser?.rowCount == 0) {
-    const insertQuery = `INSERT INTO users (username,email,password,role) VALUES ($1,$2,$3,$4)`;
+    const insertQuery = `INSERT INTO users (username,email,password,role) VALUES ($1,$2,$3,$4) RETURNING *`;
 
-    await pool.query(insertQuery, [
+    const result = await pool.query(insertQuery, [
       username,
       email,
       await hashText(password),
@@ -27,6 +29,7 @@ const signUp = async (body: SignUpData) => {
       success: true,
       message: "account created successfully",
       note: "please verify your account before login",
+      data: result.rows[0],
     };
   }
 
@@ -40,11 +43,35 @@ const signUp = async (body: SignUpData) => {
     success: true,
     message: "account created successfully",
     note: "please verify your account before login",
+    data: existingUser?.rows[0],
   };
 };
 
-const createAccount = async (body: SignUpData) => {
-  
+const createAccount = async (body: CreateAccountData) => {
+   const { phone, first_name, last_name, gender, years_of_experience, date_of_birth } = body;
+   const user = await signUp(body);
+   const profile = await profileService.create({
+     user_id: user.data.id,
+     phone,
+     first_name,
+     last_name,
+     gender,
+     years_of_experience,
+     date_of_birth
+   });
+   await usersSpecialtyService.create(
+     {
+       specialty_id: body.specialty_id,
+       profile_id: profile.data.id,
+     },
+     user.data.id,
+   );
+  return {
+    success: true,
+    message: "account created successfully",
+    note: "please verify your account before login",
+    data: user?.data,
+  };
 }
 
 const login = async (body: SignInData) => {
